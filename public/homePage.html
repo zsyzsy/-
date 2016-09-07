@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+    <style>
+        .container{
+            width:1000px !important;
+        }
+        li{
+            list-style: none;
+            margin-left: -175px;
+        }
+        .btn{
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+<div class="container all">
+    <ul>
+        <li><button class="btn btn-primary btn-lg" id="addbtn" data-toggle="modal" data-target="#myModal">
+            增加
+        </button></li>
+    </ul>
+    <div>
+        <form action="" id="updateForm">
+            姓名：<input type="text" name="name"/>
+            年龄：<input type="text" name="age"/>
+            性别：<input type="text" name="sex"/>
+            <input type="hidden" name="id"/>
+            <input type="button" id="update" value="修改"/>
+        </form>
+    </div>
+    <div>
+        <form action="" id="searchForm">
+            <select name="type" id="">
+                <option value="name">姓名</option>
+                <option value="age">年龄</option>
+                <option value="sex">性别</option>
+            </select>
+            <input type="text" name="value" id="search"/>
+            <input type="button" id="sou" value="搜索"/>
+        </form>
+    </div>
+    <div>
+        <form id="addForm">
+            <table border="1">
+                <tr>
+                    <th>编号</th><th>姓名</th><th>年龄</th><th>性别</th><th>操作</th><th>操作</th>
+                </tr>
+                <tbody id="td">
+
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <!-- 添加 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加信息</h4>
+                </div>
+                <div class="modal-body">
+
+                    <form action="#" class="form-horizontal" role="form" id="1addForm">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-4 control-label" >姓名：</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputEmail3" name="name" placeholder="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-4 control-label">年龄：</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputPassword3" name="age" placeholder="age">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword2" class="col-sm-4 control-label">性别：</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="sex" id="inputPassword2" placeholder="sex">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-5 col-sm-3">
+                                <input type="button" id="addbt" class="btn btn-info" value="添加">
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 查询 -->
+
+
+</div>
+
+
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    $(function(){
+        showll();
+        // 增加功能
+        $("#addbt").click(function(){
+//            console.log($("input[name=age]").val());
+            $.ajax({
+                type:"post",
+                url:"/student/add",
+                data:$("#1addForm").serialize(),
+                success: function (data) {
+                    console.log(data);
+                    showll();
+                    $('#myModal').modal('toggle');
+                }
+            })
+        });
+//        修改
+        $("#updateForm :button").click(function(){
+            $.ajax({
+                type:"post",
+                url:"/student/update",
+                data:$("#updateForm").serialize(),
+                success:function(data){
+                    showll();
+                }
+            })
+        });
+
+
+//        搜索
+        $("#sou").click(function(){
+//            alert(1);
+            $.ajax({
+                type:"get",
+                url:"/student/search",
+                data:{
+                    type:$("select[name=type]").val(),
+                    value:$("input[name=value]").val()
+
+                },
+                success:function(data){
+                    console.log(data);
+                    but(data);
+
+
+                }
+            })
+        });
+
+    });
+    function showll(){
+        $.ajax({
+            type:"get",
+            url:"/student/chaXun",
+            success:function(data){
+                console.log("值"+data);
+                    but(data);
+            }
+        });
+    }
+    function delStudent(id){
+        $.ajax({
+            type:"get",
+            url:"/student/delStudent",
+            data:{id:id},
+            success:function(data){
+                console.log(id);
+                showll();
+            }
+        });
+    }
+    function showById(id){
+        $("input[name=id]").val(id);
+        $.ajax({
+            type:"get",
+            url:"/student/showById",
+            data:{id:id},
+            success:function(data){
+                $("#updateForm input[name=name]").val(data[0].name);
+                $("#updateForm input[name=age]").val(data[0].age);
+                $("#updateForm input[name=sex]").val(data[0].sex);
+                $("#updateForm input[name=id]").val(id);
+            }
+        });
+
+    }
+    function but(data){
+
+        var src="";
+        $(data).each(function(){
+            src+="<tr>";
+            src+="<td>"+this.id+"</td>" +
+            "<td>"+this.name+"</td>" +
+            "<td>"+this.age+"</td>" +
+            "<td>"+this.sex+"</td>" +
+            "<td><input type='button' value='修改' onclick='showById("+this.id+")'></td>" +
+            "<td><input type='button' value='删除' onclick='delStudent("+this.id+")'></td>" +
+            "<td></td>";
+            src+="</tr>";
+        });
+        $("#td").html(src);
+    }
+</script>
+</body>
+</html>
